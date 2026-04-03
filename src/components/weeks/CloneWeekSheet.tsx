@@ -43,7 +43,7 @@ export default function CloneWeekSheet({
     <div className="fixed inset-0 z-50 flex items-end">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full glass-strong rounded-t-3xl p-6 safe-bottom">
+      <div className="relative z-10 w-full glass-strong rounded-t-3xl p-6 safe-bottom">
         <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-6" />
 
         <div className="flex items-center justify-between mb-2">
