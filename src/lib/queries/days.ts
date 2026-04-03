@@ -21,7 +21,6 @@ export async function getDayWithExercises(dayId: string): Promise<
     .eq("id", dayId)
     .eq("user_id", user.id)
     .order("order_index", { referencedTable: "day_exercises", ascending: true })
-    .order("set_number",  { referencedTable: "exercise_sets", ascending: true })
     .single();
 
   if (error) return null;
