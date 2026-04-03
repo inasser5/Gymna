@@ -51,7 +51,7 @@ export default function CloneWeekSheet({
             <Copy className="w-4 h-4 text-indigo-400" />
             <h2 className="text-base font-bold text-white">Clone Week</h2>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-xl glass flex items-center justify-center">
+          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
             <X className="w-4 h-4 text-slate-400" />
           </button>
         </div>
@@ -74,7 +74,7 @@ export default function CloneWeekSheet({
                 key={week.id}
                 onClick={() => handleClone(week.id, week.name)}
                 disabled={isPending}
-                className="flex items-center justify-between px-4 py-3 rounded-2xl glass hover:bg-white/10 active:scale-[0.98] transition-all disabled:opacity-50"
+                className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 active:scale-[0.98] transition-all disabled:opacity-50"
               >
                 <span className="text-sm font-medium text-slate-200">{week.name}</span>
                 {isPending ? (

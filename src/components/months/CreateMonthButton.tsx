@@ -65,14 +65,14 @@ export default function CreateMonthButton() {
               <h2 className="text-lg font-bold text-white">New Training Month</h2>
               <button
                 onClick={() => setOpen(false)}
-                className="w-8 h-8 rounded-xl glass flex items-center justify-center"
+                className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center"
               >
                 <X className="w-4 h-4 text-slate-400" />
               </button>
             </div>
 
             {/* Month Picker */}
-            <div className="mx-5 glass rounded-2xl p-4 mb-3 shrink-0">
+            <div className="mx-5 bg-white/5 border border-white/10 rounded-2xl p-4 mb-3 shrink-0">
               <p className="text-xs text-slate-500 mb-3 font-medium uppercase tracking-wider">
                 Select Month
               </p>
