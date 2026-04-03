@@ -1,20 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
 import type { TrainingMonth, TrainingWeek } from "@/types/database";
 
-export async function getMonths(): Promise<TrainingMonth[]> {
+export async function getMonths(): Promise<
+  (TrainingMonth & { training_weeks: { is_completed: boolean }[] })[]
+> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
   const { data, error } = await supabase
     .from("training_months")
-    .select("*")
+    .select("*, training_weeks(is_completed)")
     .eq("user_id", user.id)
     .order("year", { ascending: false })
     .order("month", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return (data ?? []) as (TrainingMonth & { training_weeks: { is_completed: boolean }[] })[];
 }
 
 export async function getMonthWithWeeks(monthId: string): Promise<

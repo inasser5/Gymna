@@ -3,25 +3,15 @@ import { getMonths } from "@/lib/queries/months";
 import MonthCard from "@/components/months/MonthCard";
 import CreateMonthButton from "@/components/months/CreateMonthButton";
 import EmptyState from "@/components/ui/EmptyState";
-import { createClient } from "@/lib/supabase/server";
 
 export default async function HomePage() {
-  const supabase = await createClient();
   const months = await getMonths();
 
-  // For each month, get week completion stats
-  const monthsWithStats = await Promise.all(
-    months.map(async (month) => {
-      const { data: weeks } = await supabase
-        .from("training_weeks")
-        .select("is_completed")
-        .eq("month_id", month.id);
-
-      const weekCount = weeks?.length ?? 0;
-      const completedWeeks = weeks?.filter((w) => w.is_completed).length ?? 0;
-      return { month, weekCount, completedWeeks };
-    })
-  );
+  const monthsWithStats = months.map((month) => ({
+    month,
+    weekCount: month.training_weeks.length,
+    completedWeeks: month.training_weeks.filter((w) => w.is_completed).length,
+  }));
 
   return (
     <div className="flex flex-col min-h-full">
