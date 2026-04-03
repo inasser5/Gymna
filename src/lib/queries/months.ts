@@ -1,11 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/user";
 import type { TrainingMonth, TrainingWeek } from "@/types/database";
 
 export async function getMonths(): Promise<
   (TrainingMonth & { training_weeks: { is_completed: boolean }[] })[]
 > {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const [supabase, user] = await Promise.all([createClient(), getUser()]);
   if (!user) return [];
 
   const { data, error } = await supabase
@@ -22,8 +22,7 @@ export async function getMonths(): Promise<
 export async function getMonthWithWeeks(monthId: string): Promise<
   (TrainingMonth & { training_weeks: TrainingWeek[] }) | null
 > {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const [supabase, user] = await Promise.all([createClient(), getUser()]);
   if (!user) return null;
 
   const { data, error } = await supabase

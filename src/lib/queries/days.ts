@@ -1,11 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/user";
 import type { TrainingDay, DayExerciseWithSets } from "@/types/database";
 
 export async function getDayWithExercises(dayId: string): Promise<
   (TrainingDay & { day_exercises: DayExerciseWithSets[] }) | null
 > {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const [supabase, user] = await Promise.all([createClient(), getUser()]);
   if (!user) return null;
 
   const { data, error } = await supabase
