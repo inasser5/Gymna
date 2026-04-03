@@ -27,6 +27,7 @@ export default function DayWorkoutClient({
 }: DayWorkoutClientProps) {
   const [showAddSheet, setShowAddSheet] = useState(false);
   const [isCompletingDay, startCompleteTransition] = useTransition();
+  const [isCompleted, setIsCompleted] = useState(day.is_completed);
 
   const {
     setActiveDayId,
@@ -53,8 +54,14 @@ export default function DayWorkoutClient({
   const hasExercises = exercises.length > 0;
 
   const handleToggleComplete = () => {
+    const next = !isCompleted;
+    setIsCompleted(next);
     startCompleteTransition(async () => {
-      await markDayComplete(day.id, !day.is_completed, weekId, monthId);
+      try {
+        await markDayComplete(day.id, next, weekId, monthId);
+      } catch {
+        setIsCompleted(!next); // rollback on failure
+      }
     });
   };
 
@@ -71,13 +78,13 @@ export default function DayWorkoutClient({
             disabled={isCompletingDay}
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all active:scale-95 shrink-0",
-              day.is_completed
+              isCompleted
                 ? "bg-emerald-500/15 text-emerald-400"
                 : "glass text-slate-400 hover:text-slate-200"
             )}
           >
             <CheckCircle2 className="w-4 h-4" />
-            {day.is_completed ? "Completed" : "Mark done"}
+            {isCompleted ? "Completed" : "Mark done"}
           </button>
         </div>
 

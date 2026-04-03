@@ -30,6 +30,7 @@ export default function AddExerciseSheet({
   const [query, setQuery] = useState("");
   const [isPending, startTransition] = useTransition();
   const [addingId, setAddingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const addExercise = useWorkoutStore((s) => s.addExercise);
 
   const filtered = useMemo(() => {
@@ -59,6 +60,7 @@ export default function AddExerciseSheet({
   }, [filtered]);
 
   const handleAdd = (exercise: Exercise) => {
+    setError(null);
     setAddingId(exercise.id);
     startTransition(async () => {
       try {
@@ -70,8 +72,9 @@ export default function AddExerciseSheet({
         );
         addExercise(newDayExercise);
         onClose();
-      } catch {
+      } catch (e) {
         setAddingId(null);
+        setError(e instanceof Error ? e.message : "Failed to add exercise");
       }
     });
   };
@@ -97,6 +100,11 @@ export default function AddExerciseSheet({
             <X className="w-4 h-4 text-slate-400" />
           </button>
         </div>
+
+        {/* Error */}
+        {error && (
+          <p className="px-5 mb-2 text-xs text-rose-400 text-center shrink-0">{error}</p>
+        )}
 
         {/* Search */}
         <div className="px-5 mb-3 shrink-0">

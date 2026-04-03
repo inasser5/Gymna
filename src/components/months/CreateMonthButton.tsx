@@ -11,7 +11,8 @@ export default function CreateMonthButton() {
   const [error, setError] = useState<string | null>(null);
 
   const today = new Date();
-  const [year, setYear] = useState(today.getFullYear());
+  const currentYear = today.getFullYear();
+  const [year, setYear] = useState(currentYear);
   const [month, setMonth] = useState(today.getMonth() + 1);
 
   const handleCreate = () => {
@@ -28,12 +29,16 @@ export default function CreateMonthButton() {
   };
 
   const prevMonth = () => {
-    if (month === 1) { setMonth(12); setYear(y => y - 1); }
-    else setMonth(m => m - 1);
+    if (month === 1) {
+      if (year <= currentYear - 1) return;
+      setMonth(12); setYear(y => y - 1);
+    } else setMonth(m => m - 1);
   };
   const nextMonth = () => {
-    if (month === 12) { setMonth(1); setYear(y => y + 1); }
-    else setMonth(m => m + 1);
+    if (month === 12) {
+      if (year >= currentYear + 2) return;
+      setMonth(1); setYear(y => y + 1);
+    } else setMonth(m => m + 1);
   };
 
   return (
