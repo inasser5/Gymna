@@ -31,6 +31,7 @@ export interface TrainingWeek {
   name: string;
   is_completed: boolean;
   created_at: string;
+  start_date: string | null;
 }
 
 export interface TrainingDay {
@@ -43,6 +44,7 @@ export interface TrainingDay {
   is_completed: boolean;
   notes: string | null;
   created_at: string;
+  calendar_date: string | null;
 }
 
 export interface Exercise {

@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { CheckCircle2, Moon, Dumbbell, ChevronRight, BarChart2 } from "lucide-react";
 import { useBreadcrumbStore } from "@/store/breadcrumb.store";
 import { markDayComplete, toggleRestDay } from "@/lib/actions/days";
-import { cn, getDayName } from "@/lib/utils";
+import { cn, getDayName, formatShortDate } from "@/lib/utils";
 import type { TrainingDay } from "@/types/database";
 
 interface DayCardProps {
@@ -41,7 +41,16 @@ export default function DayCard({
   const [isPending, startTransition] = useTransition();
   const setDay = useBreadcrumbStore((s) => s.setDay);
 
-  const dayName = getDayName(day.day_number);
+  const dayName = day.calendar_date
+    ? new Date(
+        Number(day.calendar_date.split('-')[0]),
+        Number(day.calendar_date.split('-')[1]) - 1,
+        Number(day.calendar_date.split('-')[2])
+      ).toLocaleDateString('en-US', { weekday: 'long' })
+    : getDayName(day.day_number);
+
+  const dateLabel = day.calendar_date ? formatShortDate(day.calendar_date) : null;
+
   const gradient = DAY_COLORS[day.day_number - 1] ?? DAY_COLORS[0];
 
   const handleNavigate = () => {
@@ -86,6 +95,9 @@ export default function DayCard({
             <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">
               {dayName}
             </p>
+            {dateLabel && (
+              <p className="text-xs font-medium text-slate-400">{dateLabel}</p>
+            )}
             <h3 className={cn(
               "text-sm font-bold leading-tight",
               day.is_rest_day ? "text-slate-500" : "text-white"

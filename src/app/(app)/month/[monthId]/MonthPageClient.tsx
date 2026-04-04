@@ -62,7 +62,7 @@ export default function MonthPageClient({
       {/* Weeks list */}
       <div className="px-4 flex flex-col gap-3 pb-4">
         <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-          4 Weeks
+          {totalWeeks} Week{totalWeeks !== 1 ? 's' : ''}
         </h2>
         {weeksWithDays.map(({ week, days }) => (
           <WeekCard

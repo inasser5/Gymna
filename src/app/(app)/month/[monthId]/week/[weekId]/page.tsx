@@ -4,6 +4,7 @@ import { getWeekWithDays } from "@/lib/queries/weeks";
 import DayCard from "@/components/days/DayCard";
 import { createWeekDays } from "@/lib/actions/weeks";
 import { CheckCircle2, Plus } from "lucide-react";
+import { formatShortDate } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ monthId: string; weekId: string }>;
@@ -56,6 +57,17 @@ export default async function WeekPage({ params }: PageProps) {
         </p>
         <div className="flex items-end justify-between gap-3">
           <h1 className="text-2xl font-bold text-white">{weekData.name}</h1>
+          {weekData.start_date && (
+            <p className="text-sm text-slate-500 mt-1">
+              {(() => {
+                const days = weekData.training_days.filter(d => d.calendar_date);
+                if (days.length === 0) return null;
+                const first = days[0].calendar_date!;
+                const last = days[days.length - 1].calendar_date!;
+                return `${formatShortDate(first)} – ${formatShortDate(last)}`;
+              })()}
+            </p>
+          )}
           {weekData.is_completed && (
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/15">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />

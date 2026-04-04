@@ -7,7 +7,7 @@ import ExerciseCard from "./ExerciseCard";
 import AddExerciseSheet from "./AddExerciseSheet";
 import { useWorkoutStore } from "@/store/workout.store";
 import { markDayComplete } from "@/lib/actions/days";
-import { cn, formatVolume } from "@/lib/utils";
+import { cn, formatVolume, formatCalendarDate } from "@/lib/utils";
 import type { DayExerciseWithSets, TrainingDay, Exercise } from "@/types/database";
 
 interface DayWorkoutClientProps {
@@ -72,6 +72,9 @@ export default function DayWorkoutClient({
         <div className="flex items-start justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold text-white">{day.name}</h1>
+            {day.calendar_date && (
+              <p className="text-sm text-slate-500 mt-0.5">{formatCalendarDate(day.calendar_date)}</p>
+            )}
           </div>
           <button
             onClick={handleToggleComplete}

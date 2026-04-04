@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getMonthName } from "@/lib/utils";
+import { getMonthName, getCalendarWeeks, getDayName, toDateStr } from "@/lib/utils";
 
 export async function createMonth(year: number, month: number) {
   const supabase = await createClient();
@@ -10,8 +10,8 @@ export async function createMonth(year: number, month: number) {
   if (!user) throw new Error("Unauthorized");
 
   const name = `${getMonthName(month)} ${year}`;
+  const calendarWeeks = getCalendarWeeks(year, month);
 
-  // Create month
   const { data: newMonth, error: monthError } = await supabase
     .from("training_months")
     .insert({ user_id: user.id, name, year, month })
@@ -20,19 +20,40 @@ export async function createMonth(year: number, month: number) {
 
   if (monthError) throw new Error(monthError.message);
 
-  // Auto-create 4 weeks
-  const weeks = [1, 2, 3, 4].map((n) => ({
+  const weeksToInsert = calendarWeeks.map((w) => ({
     month_id: newMonth.id,
     user_id: user.id,
-    week_number: n,
-    name: `Week ${n}`,
+    week_number: w.weekNumber,
+    name: `Week ${w.weekNumber}`,
+    start_date: toDateStr(w.startDate),
   }));
 
-  const { error: weeksError } = await supabase
+  const { data: insertedWeeks, error: weeksError } = await supabase
     .from("training_weeks")
-    .insert(weeks);
+    .insert(weeksToInsert)
+    .select("id, week_number");
 
   if (weeksError) throw new Error(weeksError.message);
+
+  const weekIdByNumber = new Map((insertedWeeks ?? []).map((w) => [w.week_number, w.id]));
+
+  const daysToInsert = calendarWeeks.flatMap((calWeek) => {
+    const weekId = weekIdByNumber.get(calWeek.weekNumber);
+    if (!weekId) return [];
+    return calWeek.days.map((day) => ({
+      week_id: weekId,
+      user_id: user.id,
+      day_number: day.dayNumber,
+      name: getDayName(day.dayNumber),
+      calendar_date: toDateStr(day.date),
+    }));
+  });
+
+  const { error: daysError } = await supabase
+    .from("training_days")
+    .insert(daysToInsert);
+
+  if (daysError) throw new Error(daysError.message);
 
   revalidatePath("/");
   return newMonth;

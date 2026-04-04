@@ -6,7 +6,7 @@ import { CheckCircle2, ChevronRight, Copy, Dumbbell, Moon } from "lucide-react";
 import { useBreadcrumbStore } from "@/store/breadcrumb.store";
 import { markWeekComplete } from "@/lib/actions/weeks";
 import ProgressRing from "@/components/ui/ProgressRing";
-import { cn } from "@/lib/utils";
+import { cn, formatShortDate } from "@/lib/utils";
 import type { TrainingWeek, TrainingDay } from "@/types/database";
 
 interface WeekCardProps {
@@ -59,6 +59,14 @@ export default function WeekCard({ week, days, monthId, onClone, isCloning }: We
             Week {week.week_number}
           </p>
           <h3 className="text-base font-bold text-white">{week.name}</h3>
+          {week.start_date && days.length > 0 && (() => {
+            const lastDay = [...days].reverse().find(d => d.calendar_date);
+            return (
+              <p className="text-[10px] text-slate-600 mt-0.5">
+                {formatShortDate(week.start_date!)} – {lastDay?.calendar_date ? formatShortDate(lastDay.calendar_date) : ''}
+              </p>
+            );
+          })()}
         </div>
         <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors" />
       </div>
